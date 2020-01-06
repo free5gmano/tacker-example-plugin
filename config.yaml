@@ -1,0 +1,2 @@
+allocate_file: "allocate/main.py"
+deallocate_file: "deallocate/main.py"
