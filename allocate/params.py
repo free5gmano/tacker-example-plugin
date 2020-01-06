@@ -1,0 +1,5 @@
+OS_USER_DOMAIN_NAME = 'Default'
+OS_USERNAME = 'admin'
+OS_PASSWORD = 'password'
+OS_PROJECT_DOMAIN_NAME = 'Default'
+OS_PROJECT_NAME = 'admin'

@@ -1,0 +1,63 @@
+tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+
+description: pcrf
+node_types:
+  tosca.nodes.nfv.PCRF.VNF:
+    requirements:
+      - virtualLink1:
+          type: tosca.nodes.nfv.VL
+          required: true
+
+topology_template:
+  substitution_mappings:
+    node_type: tosca.nodes.nfv.PCRF.VNF
+
+  node_templates:
+    PCRF-VDU:
+      type: tosca.nodes.nfv.VDU.Tacker
+      properties:
+        image: free5gc
+        flavor: test
+        availability_zone: nova
+        mgmt_driver: noop
+        key_name: Titan
+        config: |
+          param0: key1
+          param1: key2
+        user_data_format: RAW
+        user_data: |
+          #!/bin/sh
+          echo 1 > /proc/sys/net/ipv4/ip_forward
+          git clone https://github.com/free5gmano/tacker-example-plugin.git
+          cp tacker-example-plugin/NSST/data/free5gc.conf /home/ubuntu/free5gc-stage-1/install/etc/free5gc/
+          cp tacker-example-plugin/NSST/data/PCRF/pcrf.conf /home/ubuntu/free5gc-stage-1/install/etc/free5gc/freeDiameter/
+          sudo sh -c "echo '10.10.0.16 mongodb' >> /etc/hosts"
+          sed -i "s/mongodb:\/\/localhost/mongodb:\/\/mongodb/g" /home/ubuntu/free5gc-stage-1/install/etc/free5gc/free5gc.conf
+          . /home/ubuntu/free5gc-stage-1/nextepc-pcrfd &
+    PCRF-CP11:
+      type: tosca.nodes.nfv.CP.Tacker
+      properties:
+        management: true
+        order: 0
+        anti_spoofing_protection: false
+        ip_address: 10.10.0.15
+      requirements:
+        - virtualLink:
+            node: PCRF-VL11
+        - virtualBinding:
+            node: PCRF-VDU
+
+    PCRF-VL11:
+      type: tosca.nodes.nfv.VL
+      properties:
+        network_name: net_mgmt
+        vendor: Tacker
+
+    PCRF-FIP1:
+      type: tosca.nodes.network.FloatingIP
+      properties:
+        floating_network: public
+        floating_ip_address: 192.168.2.115
+      requirements:
+        - link:
+            node: PCRF-CP11
