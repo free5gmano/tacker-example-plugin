@@ -1,5 +1,5 @@
-from plugin_framework.allocate_nssi_abc import AllocateNSSIabc
-from params import OS_USER_DOMAIN_NAME,OS_USERNAME,OS_PASSWORD,OS_PROJECT_DOMAIN_NAME,OS_PROJECT_NAME
+from service_mapping_plugin_framework.allocate_nssi_abc import AllocateNSSIabc
+from params import OS_MA_NFVO_IP,OS_USER_DOMAIN_NAME,OS_USERNAME,OS_PASSWORD,OS_PROJECT_DOMAIN_NAME,OS_PROJECT_NAME
 import json
 import os
 import requests
@@ -10,8 +10,8 @@ import pprint
 
 
 class NFVOPlugin(AllocateNSSIabc):
-    def __init__(self, nm_host, nfvo_host, subscription_host):
-        super().__init__(nm_host, nfvo_host, subscription_host)
+    def __init__(self, nm_host, nfvo_host):
+        super().__init__(nm_host, nfvo_host)
         self.OS_AUTH_URL = 'http://{}/identity'.format(nfvo_host)
         self.TACKER_URL = 'http://{}:9890'.format(nfvo_host)
         self.OS_USER_DOMAIN_NAME = OS_USER_DOMAIN_NAME
@@ -83,16 +83,7 @@ class NFVOPlugin(AllocateNSSIabc):
                 self.ary_data.append(value)
         return self.ary_data
 
-    def check_feasibility(self):
-        pass
-
-    def coordinate_tn_manager(self):
-        pass
-
     def create_vnf_package(self, vnf_package_path):
-        pass
-
-    def create_vnf_package_subscriptions(self):
         pass
 
     def upload_vnf_package(self, vnf_package_path):
@@ -112,7 +103,7 @@ class NFVOPlugin(AllocateNSSIabc):
                     }
                 ],
                 'attributes': {
-                    'vnfd': yaml.load(open(file_path_list[0], 'r+').read())
+                    'vnfd': yaml.safe_load(open(file_path_list[0], 'r+').read())
                 }
             }
         }
@@ -121,15 +112,6 @@ class NFVOPlugin(AllocateNSSIabc):
         headers = {'X-Auth-Token': token}
         response = requests.post(upload_vnfd_url, data=json.dumps(vnfd_body), headers=headers)
         print('Upload VNFD status: ' + str(response.status_code))
-
-    def listen_on_vnf_package_subscriptions(self):
-        pass
-
-    def create_ns_descriptor(self, ns_descriptor_path):
-        pass
-
-    def create_ns_descriptor_subscriptions(self):
-        pass
 
     def upload_ns_descriptor(self, ns_descriptor_path):
         file_path_list = glob.glob(os.path.join(ns_descriptor_path, 'Definitions/*.yaml'))
@@ -143,7 +125,7 @@ class NFVOPlugin(AllocateNSSIabc):
                 'name': self.nsd_name,
                 'description': nsd_description,
                 'attributes': {
-                    'nsd': yaml.load(open(file_path_list[0], 'r+').read())
+                    'nsd': yaml.safe_load(open(file_path_list[0], 'r+').read())
                 }
             }
         }
@@ -154,13 +136,10 @@ class NFVOPlugin(AllocateNSSIabc):
         print('Upload NSD status: ' + str(response.status_code))
         self.nsd_id = response.json()['nsd']['id']
 
-    def listen_on_ns_descriptor_subscriptions(self):
+    def create_ns_descriptor(self, ns_descriptor_path):
         pass
 
     def create_ns_instance(self, ns_descriptor_path):
-        pass
-
-    def create_ns_instance_subscriptions(self):
         pass
 
     def ns_instantiation(self, ns_descriptor_path):
@@ -172,7 +151,7 @@ class NFVOPlugin(AllocateNSSIabc):
         headers = {'X-Auth-Token': token}
         res_show_ns = {}
         if os.path.isfile(nsd_params_file):
-            nsd_params = yaml.load(open(nsd_params_file, 'r+').read())
+            nsd_params = yaml.safe_load(open(nsd_params_file, 'r+').read())
         else:
             nsd_params = {}
         ns_body = {
@@ -216,14 +195,10 @@ class NFVOPlugin(AllocateNSSIabc):
         }
         return ns_info
 
-    def listen_on_ns_instance_subscriptions(self):
-        pass
-
 
 def main():
-    nfvo_plugin = NFVOPlugin('10.0.0.232',  # nm host ip
-                             '192.168.2.95',  # os-ma-nfvo host ip
-                             '')  # os-ma-nfvo subscribe ip
+    nfvo_plugin = NFVOPlugin('10.0.0.232',  # nm ip
+                             OS_MA_NFVO_IP)  # os-ma-nfvo ip
     nfvo_plugin.allocate_nssi()
 
 
