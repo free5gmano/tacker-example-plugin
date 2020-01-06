@@ -1,12 +1,9 @@
-from plugin_framework.deallocate_nssi_abc import DeallocateNSSIabc
+from service_mapping_plugin_framework.deallocate_nssi_abc import DeallocateNSSIabc
 
 
 class NFVOPlugin(DeallocateNSSIabc):
-    def __init__(self, nm_host, nfvo_host, subscription_host):
-        super().__init__(nm_host, nfvo_host, subscription_host)
-
-    def coordinate_tn_manager(self):
-        pass
+    def __init__(self, nm_host, nfvo_host):
+        super().__init__(nm_host, nfvo_host)
 
     def terminate_network_service_instance(self):
         pass
@@ -28,10 +25,9 @@ class NFVOPlugin(DeallocateNSSIabc):
 
 
 def main():
-    nfvo_plugin = NFVOPlugin('',  # nm host ip
-                             '',  # os-ma-nfvo host ip
-                             '')  # os-ma-nfvo subscribe ip
-    nfvo_plugin.allocate_nssi()
+    nfvo_plugin = NFVOPlugin('',  # nm ip
+                             '')  # os-ma-nfvo ip
+    nfvo_plugin.deallocate_nssi()
 
 
 if __name__ == '__main__':

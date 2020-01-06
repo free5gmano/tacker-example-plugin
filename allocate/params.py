@@ -1,3 +1,4 @@
+OS_MA_NFVO_IP = '127.0.0.1'
 OS_USER_DOMAIN_NAME = 'Default'
 OS_USERNAME = 'admin'
 OS_PASSWORD = 'password'
