@@ -155,18 +155,26 @@ username:admin
 password:password
 
 ### Create free5gc image
-1. Launch Instance base on Ubunt
+1. Create Flavors
 
-2. ssh into instance
+2. Create Neutron Network
 
-3. execation bash install free5gc
+3. Create Key Pairs
+
+4. Create Security Groups
+
+5. Launch Instance base on Ubunt
+
+6. ssh into instance
+
+7. execation bash install free5gc
 > file:[install.sh](https://github.com/free5gmano/tacker-example-plugin/blob/master/install.sh)
 
 ```shell
 $ ./install.sh
 ```
 
-4. Create a snapshot of the instance
+8. Create a snapshot of the instance
 > Controller node
 ```shell
 $ vim admin-openrc
