@@ -143,6 +143,10 @@ export OS_IMAGE_API_VERSION=2
 
 $ . admin-openrc
 
+# Ubuntu 18.04
+$ wget http://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img
+
+# Ubuntu 16.04
 $ wget http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
 
 $ openstack image create "ubuntu"   --file xenial-server-cloudimg-amd64-disk1.img   --disk-format qcow2 --container-format bare   --public
@@ -163,7 +167,7 @@ password:password
 
 4. Create Security Groups
 
-5. Launch Instance base on Ubunt
+5. Launch Instance base on Ubuntu
 
 6. ssh into instance
 
