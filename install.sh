@@ -1,3 +1,4 @@
+  
 #!/bin/sh
 sudo apt-get update
 sudo apt-get -y install mongodb wget git
@@ -9,6 +10,11 @@ chmod +x installer_linux
 source ~/.bash_profile
 rm -f installer_linux
 
+echo 'export GOPATH=$HOME/go' >> ~/.bashrc
+echo 'export GOROOT=/usr/local/go' >> ~/.bashrc
+echo 'export PATH=$PATH:$GOPATH/bin:$GOROOT/bin' >> ~/.bashrc
+echo 'export GO111MODULE=off' >> ~/.bashrc
+source ~/.bashrc
 go get -u -v "github.com/gorilla/mux"
 go get -u -v "golang.org/x/net/http2"
 go get -u -v "golang.org/x/sys/unix"
