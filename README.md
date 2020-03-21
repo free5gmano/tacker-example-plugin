@@ -143,13 +143,24 @@ export OS_IMAGE_API_VERSION=2
 
 $ . admin-openrc
 
-# Ubuntu 18.04
-$ wget http://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img
-
 # Ubuntu 16.04
 $ wget http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
 
 $ openstack image create "ubuntu"   --file xenial-server-cloudimg-amd64-disk1.img   --disk-format qcow2 --container-format bare   --public
+```
+### Register VIM
+> Update:CONTROLLER-IP,PROJECT-NAME
+```shell
+$ vim vim_config.yaml
+auth_url: 'http://CONTROLLER-IP/identity'
+username: 'admin'
+password: 'password'
+project_name: 'PROJECT-NAME'
+project_domain_name: 'Default'
+user_domain_name: 'Default'
+cert_verify: 'False'
+
+$ openstack vim register --config-file vim_config.yaml --description 'free5gc vim' --is-default free5gc
 ```
 ### Login OpenStack Cluster
 OpenStack Dashboard:http://CONTROLLER-IP
@@ -210,7 +221,7 @@ $ nova list
 | 405cfb3f-b78c-4aca-9900-69f99b9e68d7 | free5gc | SHUTOFF | -          | Shutdown    | net_mgmt=10.10.0.18 |
 +--------------------------------------+---------+---------+------------+-------------+---------------------+
 
-$ nova image-create --poll free5gc free5gc
+$ nova image-create --poll free5gc free5gc_v1
 Server snapshotting... 100% complete
 Finished
 
@@ -218,9 +229,27 @@ $ openstack image list
 +--------------------------------------+--------------------------+--------+
 | ID                                   | Name                     | Status |
 +--------------------------------------+--------------------------+--------+
-| cfe84117-7785-4000-8a74-6d0fdd4365f2 | free5gc                  | active |
+| b497c57e-79f9-42d7-949d-756269eb8139 | free5gc_v1               | active |
 | d065c1d9-abc2-4133-95f9-a30a12b1667b | ubuntu                   | active |
 +--------------------------------------+--------------------------+--------+
+```
+
+9. Download the snapshot as an image
+```shell
+$ openstack image list
++--------------------------------------+--------------------------+--------+
+| ID                                   | Name                     | Status |
++--------------------------------------+--------------------------+--------+
+| b497c57e-79f9-42d7-949d-756269eb8139 | free5gc_v1               | active |
+| d065c1d9-abc2-4133-95f9-a30a12b1667b | ubuntu                   | active |
++--------------------------------------+--------------------------+--------+
+
+$ glance image-download --file free5gc_v1.raw b497c57e-79f9-42d7-949d-756269eb8139
+```
+
+10. Import the snapshot to the new environment
+```shell
+$ openstack image create "free5gc"   --file free5gc_v1.raw   --disk-format qcow2 --container-format bare   --public
 ```
 
 ## Set up
