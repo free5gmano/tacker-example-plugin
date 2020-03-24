@@ -186,6 +186,7 @@ password:password
 > file:[install.sh](https://github.com/free5gmano/tacker-example-plugin/blob/master/install.sh)
 
 ```shell
+$ chmod +x ./install.sh
 $ ./install.sh
 ```
 
