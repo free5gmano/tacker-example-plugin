@@ -30,6 +30,8 @@ topology_template:
           echo 1 > /proc/sys/net/ipv4/ip_forward
           sed -i "s/mongodb:\/\/localhost/mongodb:\/\/mongodb/g" /home/ubuntu/free5gc-stage-1/install/etc/free5gc/free5gc.conf
           sudo sh -c "echo '10.10.0.16 mongodb' >> /etc/hosts"
+          sudo sed -i "s/bind_ip = 127.0.0.1/bind_ip = 0.0.0.0/g" /etc/mongodb.conf
+          sudo service mongodb restart
     MONGODB-CP11:
       type: tosca.nodes.nfv.CP.Tacker
       properties:
