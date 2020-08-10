@@ -1,5 +1,5 @@
 from service_mapping_plugin_framework.allocate_nssi_abc import AllocateNSSIabc
-from params import OS_MA_NFVO_IP,OS_USER_DOMAIN_NAME,OS_USERNAME,OS_PASSWORD,OS_PROJECT_DOMAIN_NAME,OS_PROJECT_NAME
+from .params import OS_MA_NFVO_IP,OS_USER_DOMAIN_NAME,OS_USERNAME,OS_PASSWORD,OS_PROJECT_DOMAIN_NAME,OS_PROJECT_NAME
 import json
 import os
 import requests
@@ -10,20 +10,22 @@ import pprint
 
 
 class NFVOPlugin(AllocateNSSIabc):
-    def __init__(self, nm_host, nfvo_host):
-        super().__init__(nm_host, nfvo_host)
-        self.OS_AUTH_URL = 'http://{}/identity'.format(nfvo_host)
-        self.TACKER_URL = 'http://{}:9890'.format(nfvo_host)
+    def __init__(self, nm_host, nfvo_host, subscription_host, parameter):
+        super().__init__(nm_host, nfvo_host, subscription_host, parameter)
+        # Don't devstack environment OS_AUTH_URL can't add 'identity'.
+        self.OS_AUTH_URL = 'http://{}/identity'.format(nfvo_host.split(':')[0])
+        self.TACKER_URL = 'http://{}'.format(nfvo_host)
         self.OS_USER_DOMAIN_NAME = OS_USER_DOMAIN_NAME
         self.OS_USERNAME = OS_USERNAME
         self.OS_PASSWORD = OS_PASSWORD
         self.OS_PROJECT_DOMAIN_NAME = OS_PROJECT_DOMAIN_NAME
         self.OS_PROJECT_NAME = OS_PROJECT_NAME
-        self.ary_data = []
-        self.nsd_id = ''
-        self.nsd_name = ''
-        self.get_token_result = ''
-        self.project_id = ''
+        self.ary_data = list()
+        self.nsd_id = str()
+        self.nsd_name = str()
+        self.get_token_result = str()
+        self.project_id = str()
+        self.nsinfo = dict()
 
     def get_token(self):
         # print("\nGet token:")
@@ -136,10 +138,13 @@ class NFVOPlugin(AllocateNSSIabc):
         print('Upload NSD status: ' + str(response.status_code))
         self.nsd_id = response.json()['nsd']['id']
 
-    def create_ns_descriptor(self, ns_descriptor_path):
+    def create_ns_descriptor(self):
         pass
 
-    def create_ns_instance(self, ns_descriptor_path):
+    def check_feasibility(self):
+        pass
+
+    def create_ns_instance(self):
         pass
 
     def ns_instantiation(self, ns_descriptor_path):
@@ -182,25 +187,52 @@ class NFVOPlugin(AllocateNSSIabc):
         ns_instance_id = res_show_ns['ns']['id']
         description = res_show_ns['ns']['description']
         nsd_info_id = res_show_ns['ns']['nsd_id']
-        vnf_info = self.json_to_array(eval(res_show_ns['ns']['vnf_ids']))
-        vnffg_info = self.json_to_array(eval(res_show_ns['ns']['vnffg_ids']))
+        vnf_info = res_show_ns['ns']['vnf_ids']
+        vnffg_info = res_show_ns['ns']['vnffg_ids']
         ns_state = res_show_ns['ns']['status']
-        ns_info = {
-            'nsInstanceId': ns_instance_id,
-            'description': description,
+        monitoringParameter = res_show_ns['ns']['mgmt_urls']
+        self.nsinfo = {
+            'id': ns_instance_id,
+            'nsInstanceDescription': description,
             'nsdInfoId': nsd_info_id,
-            'vnfInfo': vnf_info,
+            'vnfInstance': vnf_info,
             'vnffgInfo': vnffg_info,
-            'nsState': ns_state
+            'nsState': ns_state,
+            'monitoringParameter': monitoringParameter
         }
-        return ns_info
 
+    def coordinate_tn_manager(self):
+        pass
 
-def main():
-    nfvo_plugin = NFVOPlugin('10.0.0.232',  # nm ip
-                             OS_MA_NFVO_IP)  # os-ma-nfvo ip
-    nfvo_plugin.allocate_nssi()
+    def create_vnf_package_subscriptions(self, vnf):
+        pass
 
+    def listen_on_vnf_package_subscriptions(self):
+        pass
 
-if __name__ == '__main__':
-    main()
+    def create_ns_descriptor_subscriptions(self, ns_des):
+        pass
+
+    def listen_on_ns_descriptor_subscriptions(self):
+        pass
+
+    def create_ns_instance_subscriptions(self):
+        pass
+
+    def listen_on_ns_instance_subscriptions(self):
+        pass
+
+    def scale_ns_instantiation(self, ns_instance_id, scale_info):
+        pass
+
+    def update_ns_instantiation(self, ns_instance_id, update_info):
+        pass
+
+    def read_ns_instantiation(self, ns_instance_id):
+        pass
+
+    def read_ns_descriptor(self, nsd_object_id):
+        pass
+
+    def read_vnf_package(self, vnf_pkg_id):
+        pass
