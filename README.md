@@ -273,9 +273,3 @@ $ openstack image create "free5gc"   --file free5gc_v1.raw   --disk-format qcow2
 
 > file:[/allocate/main.py](/allocate/main.py)
 
-```python
-def main():
-    nfvo_plugin = NFVOPlugin('127.0.0.1',    # nm ip
-                             OS_MA_NFVO_IP)  # os-ma-nfvo ip
-    nfvo_plugin.allocate_nssi()
-```

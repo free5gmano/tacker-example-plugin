@@ -1,1 +1,2 @@
-plugin-framework
+requests
+service-mapping-plugin-framework
