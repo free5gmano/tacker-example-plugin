@@ -182,7 +182,7 @@ password:password
 
 6. ssh into instance
 
-7. execation bash install free5gc
+7. execution bash install free5gc
 > file:[install.sh](https://github.com/free5gmano/tacker-example-plugin/blob/master/install.sh)
 
 ```shell
