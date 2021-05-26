@@ -1,5 +1,5 @@
 allocate_file: "allocate/main.py"
 deallocate_file: "deallocate/main.py"
 nm_ip: '127.0.0.1:8080'
-nfvo_ip: '10.0.0.217:8000'
+nfvo_ip: '10.0.0.217:9890'
 kafka_ip: '10.0.0.217:8082'
